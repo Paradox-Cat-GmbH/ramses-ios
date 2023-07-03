@@ -36,5 +36,4 @@ ELSEIF(TARGET_OS MATCHES "Linux" OR TARGET_OS MATCHES "Android")
         EGL_LIBRARY
         EGL_FOUND
     )
-
 ENDIF()

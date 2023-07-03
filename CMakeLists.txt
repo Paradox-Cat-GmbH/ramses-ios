@@ -19,7 +19,7 @@ PROJECT(ramses-sdk VERSION ${RAMSES_VERSION_MAJOR}.${RAMSES_VERSION_MINOR}.${RAM
 
 # TODO(tobias) must be here because used inside platformConfig, rework order of all options to solve properly
 OPTION(ramses-sdk_WARNINGS_AS_ERRORS "Enable warnings as errors during build" OFF)
-set(ramses-sdk_CPP_VERSION "14" CACHE STRING "Set used c++ version, must be 14, 17 or 20")
+set(ramses-sdk_CPP_VERSION "17" CACHE STRING "Set used c++ version, must be 14, 17 or 20")
 
 include(cmake/ramses/setCmakePolicies.cmake NO_POLICY_SCOPE)  # we want to propagate policy settings out!
 include(cmake/ramses/platformDetection.cmake)
@@ -197,6 +197,7 @@ ACME2_PROJECT(
                                 AUTO renderer/Platform/Platform_X11
                                 AUTO renderer/Platform/Platform_Integrity_RGL
                                 AUTO renderer/Platform/Platform_Android
+                                AUTO renderer/Platform/Platform_iOS_EGL
 
                                 AUTO ramses-shared-lib
 
@@ -211,6 +212,15 @@ ACME2_PROJECT(
 
                                 AUTO demo
 )
+
+#==========================================================================
+# iOS: Make sure headers work for ANGLE usage.
+#==========================================================================
+
+IF ("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS")
+    target_include_directories(Device_GL SYSTEM PUBLIC ${ramses-sdk_SOURCE_DIR}/external/ANGLE/include)
+    target_include_directories(Context_EGL SYSTEM PUBLIC ${ramses-sdk_SOURCE_DIR}/external/ANGLE/include)
+ENDIF()
 
 #==========================================================================
 # target: code style checker

@@ -149,6 +149,16 @@ namespace ramses
         return impl.setAndroidNativeWindow(nativeWindowPtr);
     }
 
+    void* DisplayConfig::getIOSNativeWindow() const
+    {
+        return impl.getIOSNativeWindow();
+    }
+
+    status_t DisplayConfig::setIOSNativeWindow(void* nativeWindowPtr)
+    {
+        return impl.setIOSNativeWindow(nativeWindowPtr);
+    }
+
     status_t DisplayConfig::setWindowIviVisible()
     {
         const status_t status = impl.setWindowIviVisible(true);

@@ -65,6 +65,9 @@ namespace ramses_internal
         AndroidNativeWindowPtr getAndroidNativeWindow() const;
         void setAndroidNativeWindow(AndroidNativeWindowPtr nativeWindowPtr);
 
+        IOSNativeWindowPtr getIOSNativeWindow() const;
+        void setIOSNativeWindow(IOSNativeWindowPtr nativeWindowPtr);
+        
         Bool getStartVisibleIvi() const;
         void setStartVisibleIvi(bool startVisible);
 
@@ -134,6 +137,7 @@ namespace ramses_internal
         WindowsWindowHandle m_windowsWindowHandle;
         X11WindowHandle m_x11WindowHandle;
         AndroidNativeWindowPtr m_androidNativeWindowPtr;
+        IOSNativeWindowPtr m_iOSNativeWindowPtr;
         Bool m_startVisibleIvi = false;
         String m_waylandDisplay;
 

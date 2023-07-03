@@ -131,6 +131,17 @@ namespace ramses
         m_internalConfig.setAndroidNativeWindow(ramses_internal::AndroidNativeWindowPtr(nativeWindowPtr));
         return StatusOK;
     }
+    
+    void* DisplayConfigImpl::getIOSNativeWindow() const
+    {
+        return m_internalConfig.getIOSNativeWindow().getValue();
+    }
+
+    status_t DisplayConfigImpl::setIOSNativeWindow(void * nativeWindowPtr)
+    {
+        m_internalConfig.setIOSNativeWindow(ramses_internal::IOSNativeWindowPtr(nativeWindowPtr));
+        return StatusOK;
+    }
 
     status_t DisplayConfigImpl::setWindowIviVisible(bool visible)
     {
