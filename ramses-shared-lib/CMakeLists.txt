@@ -10,6 +10,13 @@ ADD_DEFINITIONS(-DRAMSES_LINK_SHARED_EXPORT)
 
 if (ramses-sdk_BUILD_FULL_SHARED_LIB)
 
+    RENDERER_MODULE_PER_CONFIG_STATIC(ramses-static-lib
+        TYPE                    STATIC_LIBRARY
+        ENABLE_INSTALL          ON
+
+        ${ramses-shared-lib-MIXIN}
+        ${ramses-shared-lib-renderer-MIXIN}
+        )
     RENDERER_MODULE_PER_CONFIG_STATIC(ramses-shared-lib
         TYPE                    SHARED_LIBRARY
         ENABLE_INSTALL          ON
