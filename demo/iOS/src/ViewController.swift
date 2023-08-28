@@ -7,27 +7,29 @@
 //  -------------------------------------------------------------------------
 
 import UIKit
+import GLKit
 
 class ViewController: UIViewController {
-    private var metalLayer: CAMetalLayer!
+    private var eaglLayer: CAEAGLLayer!
     private var rendererBundle: RendererBundle?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        metalLayer = CAMetalLayer()
-        metalLayer.frame = view.frame
-        view.layer.addSublayer(metalLayer)
+        eaglLayer = CAEAGLLayer()
+        view.layer.addSublayer(eaglLayer)
+        eaglLayer.frame = view.frame
+        
+        eaglLayer.isOpaque = true
+        eaglLayer.drawableProperties = [kEAGLDrawablePropertyRetainedBacking: NSNumber(booleanLiteral: false), kEAGLDrawablePropertyColorFormat: kEAGLColorFormatRGBA8]
     }
+
 
     private func recreateRenderer() {
         destroyRenderer()
-                
-        metalLayer.contentsScale = view.window!.screen.nativeScale
-        metalLayer.drawableSize = CGSizeMake(metalLayer.frame.size.width * metalLayer.contentsScale,
-                                             metalLayer.frame.size.height * metalLayer.contentsScale)
-        rendererBundle = RendererBundle(metalLayer: metalLayer,
-                                        width: Int32(metalLayer.frame.size.width * metalLayer.contentsScale),
-                                        height: Int32(metalLayer.frame.size.height * metalLayer.contentsScale),
+        
+        rendererBundle = RendererBundle(caeaglLayer: eaglLayer,
+                                        width: Int32(eaglLayer.frame.size.width),
+                                        height: Int32(eaglLayer.frame.size.height),
                                         interfaceSelectionIP: "127.0.0.1",
                                         daemonIP: "127.0.0.1")
         rendererBundle?.connect()
@@ -40,7 +42,7 @@ class ViewController: UIViewController {
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         coordinator.animate(alongsideTransition: nil) { context in
-            self.metalLayer.frame = self.view.layer.frame
+            self.eaglLayer.frame = self.view.frame
             self.recreateRenderer()
         }
     }

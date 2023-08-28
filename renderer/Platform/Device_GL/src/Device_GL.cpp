@@ -120,8 +120,10 @@ namespace ramses_internal
     {
         for (const auto& it : m_textureSamplerObjectsCache)
             deleteTextureSampler(it.second);
-
+        
+#ifndef __APPLE__
         m_resourceMapper.deleteResource(m_framebufferRenderTarget);
+#endif
     }
 
     Bool Device_GL::init()
@@ -144,20 +146,23 @@ namespace ramses_internal
 
         loadOpenGLExtensions();
         queryDeviceDependentFeatures();
-
+        
+    #ifdef __APPLE__
+        m_framebufferRenderTarget = m_context.getFramebufferResource();
+    #else
         m_framebufferRenderTarget = m_resourceMapper.registerResource(std::make_unique<RenderTargetGPUResource>(0));
-
-// This is required for proper smoothing of cube sides. This feature is enabled by default on ES 3.0,
-// but needs explicit enabling for Desktop GL
-#ifdef DESKTOP_GL
+    #endif
+    // This is required for proper smoothing of cube sides. This feature is enabled by default on ES 3.0,
+    // but needs explicit enabling for Desktop GL
+    #ifdef DESKTOP_GL
         if (!m_isEmbedded)
         {
             glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
         }
-#endif
+    #endif
 
         m_limits.logLimits();
-
+                
         return true;
     }
 
@@ -229,7 +234,7 @@ namespace ramses_internal
         {
             deviceClearFlags |= GL_STENCIL_BUFFER_BIT;
         }
-
+        
         glClear(deviceClearFlags);
     }
 
@@ -377,11 +382,15 @@ namespace ramses_internal
     {
         LOG_DEBUG(CONTEXT_RENDERER, "Device_GL::createTexture:  creating a new texture (texture render target)");
 
+#ifdef __APPLE__
+        auto GL_TEXTURE_2D_MULTISAMPLE = GL_TEXTURE_2D;
+#endif
+        
         const GLHandle texID = generateAndBindTexture((sampleCount) ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D);
         GLTextureInfo texInfo;
         fillGLInternalTextureInfo((sampleCount) ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D, width, height, 1u, storageFormat, {ETextureChannelColor::Red, ETextureChannelColor::Green, ETextureChannelColor::Blue, ETextureChannelColor::Alpha}, texInfo);
         allocateTextureStorage(texInfo, 1u, sampleCount);
-
+        
         return texID;
     }
 
@@ -412,7 +421,7 @@ namespace ramses_internal
         sampleCount = checkAndClampNumberOfSamples(internalFormat, sampleCount);
 
         glRenderbufferStorageMultisample(GL_RENDERBUFFER, sampleCount, internalFormat, width, height);
-
+        
         return renderbufferHandle;
     }
 
@@ -546,7 +555,7 @@ namespace ramses_internal
         GLTextureInfo texInfo;
         fillGLInternalTextureInfo(GL_TEXTURE_2D, width, height, 1u, textureFormat, swizzle, texInfo);
         allocateTextureStorage(texInfo, mipLevelCount);
-
+        
         return m_resourceMapper.registerResource(std::make_unique<TextureGPUResource_GL>(texInfo, texID, totalSizeInBytes));
     }
 
@@ -556,7 +565,7 @@ namespace ramses_internal
         GLTextureInfo texInfo;
         fillGLInternalTextureInfo(GL_TEXTURE_3D, width, height, depth, textureFormat, DefaultTextureSwizzleArray, texInfo);
         allocateTextureStorage(texInfo, mipLevelCount);
-
+        
         return m_resourceMapper.registerResource(std::make_unique<TextureGPUResource_GL>(texInfo, texID, totalSizeInBytes));
     }
 
@@ -566,7 +575,7 @@ namespace ramses_internal
         GLTextureInfo texInfo;
         fillGLInternalTextureInfo(GL_TEXTURE_CUBE_MAP, faceSize, faceSize, 1u, textureFormat, swizzle, texInfo);
         allocateTextureStorage(texInfo, mipLevelCount);
-
+        
         return m_resourceMapper.registerResource(std::make_unique<TextureGPUResource_GL>(texInfo, texID, totalSizeInBytes));
     }
 
@@ -578,7 +587,7 @@ namespace ramses_internal
             const GLHandle texID = generateAndBindTexture(textureTarget);
             GLTextureInfo texInfo;
             fillGLInternalTextureInfo(textureTarget, 0u, 0u, 1u, ETextureFormat::RGBA8, {}, texInfo);
-
+            
             return m_resourceMapper.registerResource(std::make_unique<TextureGPUResource_GL>(texInfo, texID, 0u));
         }
         LOG_ERROR(CONTEXT_RENDERER, "Device_GL::allocateExternalTexture: feature not supported on platform");
@@ -624,7 +633,7 @@ namespace ramses_internal
             assert(data == nullptr);
             GLHandle texID = InvalidGLHandle;
             glGenTextures(1, &texID);
-
+            
             return m_resourceMapper.registerResource(std::make_unique<GPUResource>(texID, 0u));
         }
         else
@@ -648,7 +657,7 @@ namespace ramses_internal
             assert(!texInfo.uploadParams.compressed);
             // For now stream texture upload is using glTexImage2D instead of glStore/glSubimage because its size/format cannot be immutable
             glTexImage2D(texInfo.target, 0, texInfo.uploadParams.sizedInternalFormat, texInfo.width, texInfo.height, 0, texInfo.uploadParams.baseInternalFormat, texInfo.uploadParams.type, data);
-
+            
             return handle;
         }
     }
@@ -684,7 +693,7 @@ namespace ramses_internal
                 numSamples = maxNumSamples;
             }
         }
-
+        
         return numSamples;
     }
 
@@ -705,11 +714,15 @@ namespace ramses_internal
         case GL_TEXTURE_2D:
         case GL_TEXTURE_CUBE_MAP:
             glTexStorage2D(texInfo.target, mipLevels, texInfo.uploadParams.sizedInternalFormat, texInfo.width, texInfo.height);
+
             break;
+#ifndef __APPLE__
         case GL_TEXTURE_2D_MULTISAMPLE:
             sampleCount = checkAndClampNumberOfSamples(texInfo.uploadParams.sizedInternalFormat, sampleCount);
             glTexStorage2DMultisample(texInfo.target, sampleCount, texInfo.uploadParams.sizedInternalFormat, texInfo.width, texInfo.height, ToGLboolean(true));
+
             break;
+#endif
         case GL_TEXTURE_3D:
             glTexStorage3D(texInfo.target, mipLevels, texInfo.uploadParams.sizedInternalFormat, texInfo.width, texInfo.height, texInfo.depth);
             break;
@@ -775,7 +788,7 @@ namespace ramses_internal
         default:
             assert(false);
         }
-
+        
         if (bufferGLHandle != InvalidGLHandle)
             return m_resourceMapper.registerResource(std::make_unique<RenderBufferGPUResource>(bufferGLHandle, width, height, type, format, sampleCount, accessMode));
 
@@ -786,7 +799,7 @@ namespace ramses_internal
     {
         if(m_deviceExtension == nullptr)
             return {};
-
+        
         return m_deviceExtension->createDmaRenderBuffer(width, height, fourccFormat, usageFlags, modifiers);
     }
 
@@ -794,7 +807,7 @@ namespace ramses_internal
     {
         if(m_deviceExtension == nullptr)
             return -1;
-
+        
         return m_deviceExtension->getDmaRenderBufferFD(handle);
     }
 
@@ -829,7 +842,7 @@ namespace ramses_internal
         {
             assert(false);
         }
-
+        
         m_resourceMapper.deleteResource(bufferHandle);
     }
 
@@ -893,7 +906,7 @@ namespace ramses_internal
             const auto anisotropyLevel = std::min(samplerStates.m_anisotropyLevel, m_limits.getMaximumAnisotropy());
             glSamplerParameteri(sampler, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropyLevel);
         }
-
+        
         return m_resourceMapper.registerResource(std::make_unique<GPUResource>(sampler, 0u));
     }
 
@@ -902,7 +915,7 @@ namespace ramses_internal
         const GPUResource& resource = m_resourceMapper.getResourceAs<GPUResource>(handle);
         const GLHandle glAddress = resource.getGPUAddress();
         glDeleteSamplers(1, &glAddress);
-
+        
         m_resourceMapper.deleteResource(handle);
     }
 
@@ -950,7 +963,7 @@ namespace ramses_internal
                 return false;
             }
         }
-
+        
         return true;
     }
 
@@ -1006,11 +1019,15 @@ namespace ramses_internal
     }
 
     void Device_GL::discardDepthStencil()
-    {
+{
         // Not to be used with default framebuffer which might need (depending on implementation) different enums for attachments
         // https://www.khronos.org/registry/OpenGL-Refpages/es3.0/html/glInvalidateFramebuffer.xhtml
+#ifdef __APPLE__
+       constexpr std::array<GLenum, 2> depthStencilAttachments = { GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT };
+#else
         constexpr std::array<GLenum, 3> depthStencilAttachments = { GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT, GL_DEPTH_STENCIL_ATTACHMENT };
-        glInvalidateFramebuffer(GL_FRAMEBUFFER, static_cast<GLsizei>(depthStencilAttachments.size()), depthStencilAttachments.data());
+#endif
+      glInvalidateFramebuffer(GL_FRAMEBUFFER, static_cast<GLsizei>(depthStencilAttachments.size()), depthStencilAttachments.data());
     }
 
     void Device_GL::bindRenderBufferToRenderTarget(const RenderBufferGPUResource& renderBufferGpuResource, size_t colorBufferSlot)
@@ -1031,6 +1048,10 @@ namespace ramses_internal
 
     void Device_GL::bindReadWriteRenderBufferToRenderTarget(ERenderBufferType bufferType, size_t colorBufferSlot, GLHandle bufferGLHandle, const bool multiSample)
     {
+        #ifdef __APPLE__
+        auto GL_TEXTURE_2D_MULTISAMPLE = GL_TEXTURE_2D;
+        #endif
+                
         const int texTarget = (multiSample) ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
         switch (bufferType)
         {
@@ -1116,7 +1137,7 @@ namespace ramses_internal
         glGenTextures(1, &texID);
         assert(texID != InvalidGLHandle);
         glBindTexture(target, texID);
-
+    
         return texID;
     }
 
@@ -1125,7 +1146,7 @@ namespace ramses_internal
         GLHandle glAddress = InvalidGLHandle;
         glGenBuffers(1, &glAddress);
         assert(glAddress != InvalidGLHandle);
-
+        
         return m_resourceMapper.registerResource(std::make_unique<GPUResource>(glAddress, totalSizeInBytes));
     }
 
@@ -1192,7 +1213,7 @@ namespace ramses_internal
         glBindVertexArray(0u);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0u);
         glBindBuffer(GL_ARRAY_BUFFER, 0u);
-
+        
         return m_resourceMapper.registerResource(std::make_unique<VertexArrayGPUResource>(vertexArrayAddress, vertexArrayInfo.indexBuffer));
     }
 
@@ -1232,7 +1253,7 @@ namespace ramses_internal
         glGenBuffers(1, &glAddress);
         assert(glAddress != InvalidGLHandle);
         assert(dataType == EDataType::UInt16 || dataType == EDataType::UInt32);
-
+        
         return m_resourceMapper.registerResource(std::make_unique<IndexBufferGPUResource>(glAddress, sizeInBytes, dataType == EDataType::UInt16 ? 2 : 4));
     }
 
@@ -1258,7 +1279,7 @@ namespace ramses_internal
         ShaderProgramInfo programInfo;
         String debugErrorLog;
         const Bool uploadSuccessful = ShaderUploader_GL::UploadShaderProgramFromSource(shader, programInfo, debugErrorLog);
-
+        
         if (uploadSuccessful)
             return std::make_unique<const ShaderGPUResource_GL>(shader, programInfo);
         else
@@ -1278,7 +1299,7 @@ namespace ramses_internal
         ShaderProgramInfo programInfo;
         String debugErrorLog;
         const Bool uploadSuccessful = ShaderUploader_GL::UploadShaderProgramFromBinary(binaryShaderData, binaryShaderDataSize, binaryShaderFormat, programInfo, debugErrorLog);
-
+        
         if (uploadSuccessful)
         {
             LOG_INFO(CONTEXT_SMOKETEST, "Device_GL::uploadShader: renderer successfully uploaded binary shader for effect " << shader.getName());

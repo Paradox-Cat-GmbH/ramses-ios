@@ -11,9 +11,8 @@
 
 #include "Platform_Base/Window_Base.h"
 #include "RendererAPI/IWindowEventHandler.h"
-#include <EGL/egl.h>
 
-@class CAMetalLayer;
+@class EAGLDrawable;
 
 namespace ramses_internal
 {
@@ -27,9 +26,6 @@ namespace ramses_internal
 
         void handleEvents() override;
 
-        EGLNativeDisplayType getNativeDisplayHandle() const;
-        EGLNativeWindowType getNativeWindowHandle() const;
-
         bool hasTitle() const override
         {
             return false;
@@ -39,7 +35,7 @@ namespace ramses_internal
         bool setExternallyOwnedWindowSize(uint32_t width, uint32_t height) override;
 
     private:
-        CAMetalLayer* mMetalLayer;
+        EAGLDrawable* eaglDrawable;
     };
 }
 

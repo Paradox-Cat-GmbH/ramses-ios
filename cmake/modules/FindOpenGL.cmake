@@ -76,5 +76,22 @@ ELSEIF(CMAKE_SYSTEM_NAME MATCHES "Android")
         OpenGL_INCLUDE_DIRS
         OpenGL_LIBRARIES
     )
+
+ELSEIF(CMAKE_SYSTEM_NAME MATCHES "iOS")
+
+
+    # GL ES 3 is implemented in GLESv2 (in mesa)
+    FIND_LIBRARY(OpenGL_LIBRARIES
+        NAMES OpenGLES
+        PATHS
+    )
+
+    IF(OpenGL_LIBRARIES)
+        SET(OpenGL_FOUND TRUE)
+    ENDIF()
+
+    MARK_AS_ADVANCED(
+        OpenGL_LIBRARIES
+    )
 ENDIF()
 

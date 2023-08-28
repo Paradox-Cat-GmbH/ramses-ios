@@ -64,6 +64,7 @@ namespace ramses_internal
 
         const bool hasGeometryShader = (std::strcmp(effect.getGeometryShader(), "") != 0);
         GLHandle geometryShaderHandle = InvalidGLHandle;
+#ifndef __APPLE__
         if (hasGeometryShader)
         {
             geometryShaderHandle = CompileShaderStage(effect.getGeometryShader(), GL_GEOMETRY_SHADER_EXT, debugErrorLog);
@@ -76,6 +77,7 @@ namespace ramses_internal
                 return false;
             }
         }
+#endif
 
         LOG_TRACE(CONTEXT_RENDERER, "ShaderUploader_GL::UploadShaderProgramFromSource:  linking shader program");
 

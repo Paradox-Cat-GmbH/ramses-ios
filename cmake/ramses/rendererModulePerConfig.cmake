@@ -17,7 +17,7 @@ SET(RENDERER_CONFIG_LIST
     "windows-wgl-4-5"
 
     "android-egl-es-3-0",
-    "ios-egl-es-3-0",
+    "ios-eagl-es-3-0",
     )
 
 #helper macro

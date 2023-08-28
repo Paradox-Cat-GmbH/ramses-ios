@@ -172,6 +172,7 @@ ACME2_PROJECT(
 
                                 # Context Components
                                 AUTO renderer/Platform/Context_WGL
+                                AUTO renderer/Platform/Context_EAGL
                                 AUTO renderer/Platform/Context_EGL
 
                                 # Device Components
@@ -191,13 +192,14 @@ ACME2_PROJECT(
                                 AUTO renderer/Platform/Platform_Windows_WGL_4_5
                                 AUTO renderer/Platform/Platform_Windows_WGL_ES_3_0
                                 AUTO renderer/Platform/Platform_EGL
+                                AUTO renderer/Platform/Platform_EAGL
                                 AUTO renderer/Platform/Platform_Wayland_EGL
                                 AUTO renderer/Platform/Platform_Wayland_IVI_EGL
                                 AUTO renderer/Platform/Platform_Wayland_Shell_EGL
                                 AUTO renderer/Platform/Platform_X11
                                 AUTO renderer/Platform/Platform_Integrity_RGL
                                 AUTO renderer/Platform/Platform_Android
-                                AUTO renderer/Platform/Platform_iOS_EGL
+                                AUTO renderer/Platform/Platform_iOS_EAGL
 
                                 AUTO ramses-shared-lib
 
@@ -212,15 +214,6 @@ ACME2_PROJECT(
 
                                 AUTO demo
 )
-
-#==========================================================================
-# iOS: Make sure headers work for ANGLE usage.
-#==========================================================================
-
-IF ("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS")
-    target_include_directories(Device_GL SYSTEM PUBLIC ${ramses-sdk_SOURCE_DIR}/external/ANGLE/include)
-    target_include_directories(Context_EGL SYSTEM PUBLIC ${ramses-sdk_SOURCE_DIR}/external/ANGLE/include)
-ENDIF()
 
 #==========================================================================
 # target: code style checker

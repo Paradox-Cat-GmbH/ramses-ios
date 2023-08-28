@@ -27,6 +27,8 @@ namespace ramses_internal
 
         // TODO Violin this should be removed - provides access to platform-specific data
         virtual void* getProcAddress(const Char* name) const = 0;
+        
+        virtual DeviceResourceHandle getFramebufferResource() const {return DeviceResourceHandle::Invalid(); };
     };
 }
 

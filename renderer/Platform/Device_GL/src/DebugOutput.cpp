@@ -1,4 +1,4 @@
-﻿//  -------------------------------------------------------------------------
+//  -------------------------------------------------------------------------
 //  Copyright (C) 2018 BMW Car IT GmbH
 //  -------------------------------------------------------------------------
 //  This Source Code Form is subject to the terms of the Mozilla Public
@@ -58,6 +58,7 @@ namespace ramses_internal
 
         switch (type)
         {
+#ifndef __APPLE__
         case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
         case GL_DEBUG_TYPE_ERROR:
             LOG_ERROR(CONTEXT_RENDERER, "OpenGL error: " << message);
@@ -72,6 +73,7 @@ namespace ramses_internal
         case GL_DEBUG_TYPE_PUSH_GROUP:
         case GL_DEBUG_TYPE_POP_GROUP:
         case GL_DEBUG_TYPE_OTHER:
+#endif
         default:
             LOG_TRACE(CONTEXT_RENDERER, "OpenGL info: " << message);
         }
@@ -79,7 +81,7 @@ namespace ramses_internal
 
     Bool DebugOutput::loadExtensionFunctionPointer(const IContext& context)
     {
-#if defined(__linux__) || defined(__ghs__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__ghs__)
         glDebugMessageCallback =
             reinterpret_cast<PFNGLDEBUGMESSAGECALLBACKKHRPROC>(context.getProcAddress("glDebugMessageCallbackKHR"));
         glDebugMessageControl =
@@ -96,6 +98,7 @@ namespace ramses_internal
 
     Bool DebugOutput::enable(const IContext& context)
     {
+#ifndef __APPLE__
         if (!loadExtensionFunctionPointer(context))
         {
             LOG_INFO(CONTEXT_RENDERER, "Could not found OpenGL debug output extension");
@@ -116,6 +119,9 @@ namespace ramses_internal
         glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_PERFORMANCE, GL_DONT_CARE, static_cast<GLsizei>(messageIds.size()), messageIds.data(), GL_FALSE);
 
         return true;
+#else
+        return false;
+#endif
     }
 
     Bool DebugOutput::isAvailable() const

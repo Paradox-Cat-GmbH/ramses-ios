@@ -26,10 +26,15 @@ namespace ramses_internal
     private:
         Bool loadExtensionFunctionPointer(const IContext& context);
 
-#if defined(__linux__) || defined(__ghs__)  || defined(__APPLE__)
+#if defined(__linux__) || defined(__ghs__)  
         PFNGLDEBUGMESSAGECALLBACKKHRPROC glDebugMessageCallback = nullptr;
         PFNGLDEBUGMESSAGECONTROLKHRPROC  glDebugMessageControl  = nullptr;
 #else
+        
+#if defined(__APPLE__)
+#define PFNGLDEBUGMESSAGECALLBACKPROC void*
+#define PFNGLDEBUGMESSAGECONTROLPROC void*
+#endif
         PFNGLDEBUGMESSAGECALLBACKPROC glDebugMessageCallback = 0;
         PFNGLDEBUGMESSAGECONTROLPROC  glDebugMessageControl  = 0;
 #endif

@@ -10,16 +10,17 @@
 #define RAMSES_RENDERERBUNDLE_H
 
 #import <UIKit/UIKit.h>
+#import <GLKit/GLKit.h>
 
 @interface RendererBundle : NSObject
 
-- (instancetype)initWithMetalLayer:(CAMetalLayer *)metalLayer width:(int)width height:(int)height interfaceSelectionIP:(NSString*)interfaceSelectionIP daemonIP:(NSString*)daemonIP;
+- (instancetype)initWithCAEAGLLayer:(CAEAGLLayer *)eaglLayer width:(int)width height:(int)height interfaceSelectionIP:(NSString*)interfaceSelectionIP daemonIP:(NSString*)daemonIP;
 
 - (void)dealloc;
 
 - (void)connect;
 - (void)run;
-- (CAMetalLayer*) getNativeWindow;
+- (CAEAGLLayer*) getNativeWindow;
 
 @end
 

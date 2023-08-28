@@ -47,7 +47,7 @@ void SceneStateAutoShowEventHandler::sceneStateChanged(ramses::sceneId_t sceneId
 
 
 @implementation RendererBundle {
-    CAMetalLayer* m_nativeWindow;
+    CAEAGLLayer* m_nativeWindow;
     std::unique_ptr<ramses::RamsesFramework> m_framework;
     ramses::RamsesRenderer* m_renderer;
     std::unique_ptr<SceneStateAutoShowEventHandler> m_autoShowHandler;
@@ -56,9 +56,9 @@ void SceneStateAutoShowEventHandler::sceneStateChanged(ramses::sceneId_t sceneId
 }
 
 
-- (instancetype)initWithMetalLayer:(CAMetalLayer *)metalLayer width:(int)width height:(int)height interfaceSelectionIP:(NSString*)interfaceSelectionIP daemonIP:(NSString*)daemonIP {
+- (instancetype)initWithCAEAGLLayer:(CAEAGLLayer *)eaglLayer width:(int)width height:(int)height interfaceSelectionIP:(NSString*)interfaceSelectionIP daemonIP:(NSString*)daemonIP {
     self = [super init];
-    m_nativeWindow = metalLayer;
+    m_nativeWindow = eaglLayer;
     
     const char* argv[] = {"", "--guid", "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"};
     ramses::RamsesFrameworkConfig frameworkConfig(3, argv);
@@ -103,7 +103,7 @@ void SceneStateAutoShowEventHandler::sceneStateChanged(ramses::sceneId_t sceneId
     }));
 }
 
--(CAMetalLayer*) getNativeWindow {
+-(CAEAGLLayer*) getNativeWindow {
     return m_nativeWindow;
 }
 

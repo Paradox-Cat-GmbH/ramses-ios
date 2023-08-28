@@ -61,6 +61,7 @@ namespace ramses_internal
             uploadParams.type = GL_UNSIGNED_SHORT_5_6_5;
             uploadParams.byteAlignment = 2u;
             break;
+#ifndef __APPLE__
         case ETextureFormat::DXT1RGB: // GL_EXT_texture_compression_dxt1
             uploadParams.compressed = true;
             uploadParams.sizedInternalFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
@@ -81,6 +82,7 @@ namespace ramses_internal
             uploadParams.baseInternalFormat = GL_RGBA;
             uploadParams.byteAlignment = 8u; // actually 16 bytes but glPixelStore accepts maximum 8 bytes alignment
             break;
+#endif
         case ETextureFormat::R8:
             uploadParams.sizedInternalFormat = GL_R8;
             uploadParams.baseInternalFormat = GL_RED;
@@ -447,8 +449,10 @@ namespace ramses_internal
             return GL_TEXTURE_CUBE_MAP;
         case EEffectInputTextureType_Texture2D:
             return GL_TEXTURE_2D;
+#ifndef __APPLE__
         case EEffectInputTextureType_Texture2DMS:
             return GL_TEXTURE_2D_MULTISAMPLE;
+#endif
         case EEffectInputTextureType_Texture3D:
             return GL_TEXTURE_3D;
         case EEffectInputTextureType_TextureExternal:
@@ -552,12 +556,14 @@ namespace ramses_internal
     {
         switch (compressedGLTextureFormat)
         {
+#ifndef  __APPLE__
         case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
             return ETextureFormat::DXT1RGB;
         case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
             return ETextureFormat::DXT3RGBA;
         case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
             return ETextureFormat::DXT5RGBA;
+#endif
         case GL_COMPRESSED_RGBA_ASTC_4x4_KHR:
             return ETextureFormat::ASTC_RGBA_4x4;
         case GL_COMPRESSED_RGBA_ASTC_5x4_KHR:

@@ -11,14 +11,14 @@
 #include "Utils/Warnings.h"
 
 #include "RendererAPI/IWindowEventHandler.h"
-#include "Platform_iOS_EGL/Window_iOS.h"
-#include <QuartzCore/CAMetalLayer.h>
+#include "Platform_iOS_EAGL/Window_iOS.h"
+#include <GLKit/GLKit.h>
 
 namespace ramses_internal
 {
     Window_iOS::Window_iOS(const DisplayConfig& displayConfig, IWindowEventHandler &windowEventHandler, UInt32 id)
         : Window_Base(displayConfig, windowEventHandler, id)
-        , mMetalLayer(static_cast<CAMetalLayer*>(displayConfig.getIOSNativeWindow().getValue()))
+        , eaglDrawable(static_cast<EAGLDrawable*>(displayConfig.getIOSNativeWindow().getValue()))
     {
         LOG_INFO(CONTEXT_RENDERER, "Window_iOS::Window_iOS");
     }
@@ -31,16 +31,6 @@ namespace ramses_internal
     Bool Window_iOS::init()
     {
         return true;
-    }
-
-    EGLNativeDisplayType Window_iOS::getNativeDisplayHandle() const
-    {
-        return EGL_DEFAULT_DISPLAY;
-    }
-
-    EGLNativeWindowType Window_iOS::getNativeWindowHandle() const
-    {
-        return mMetalLayer;
     }
 
     Bool Window_iOS::setFullscreen(Bool fullscreen)
