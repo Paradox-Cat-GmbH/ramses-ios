@@ -10,6 +10,7 @@
 #define RAMSES_CONTEXT_EGL_H
 
 #include <EGL/egl.h>
+#include <EGL/eglext.h>
 
 #undef Bool // Xlib.h (included from EGL/egl.h) defines Bool as int - this collides with ramses_internal::Bool
 #undef Status

@@ -198,6 +198,7 @@ ACME2_PROJECT(
                                 AUTO renderer/Platform/Platform_Integrity_RGL
                                 AUTO renderer/Platform/Platform_Android
                                 AUTO renderer/Platform/Platform_iOS_EGL
+                                AUTO renderer/Platform/Platform_MacOS_EGL
 
                                 AUTO ramses-shared-lib
 
@@ -217,7 +218,7 @@ ACME2_PROJECT(
 # iOS: Make sure headers work for ANGLE usage.
 #==========================================================================
 
-IF ("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS")
+IF (("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS") OR ("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin"))
     target_include_directories(Device_GL SYSTEM PUBLIC ${ramses-sdk_SOURCE_DIR}/external/ANGLE/include)
     target_include_directories(Context_EGL SYSTEM PUBLIC ${ramses-sdk_SOURCE_DIR}/external/ANGLE/include)
 ENDIF()
