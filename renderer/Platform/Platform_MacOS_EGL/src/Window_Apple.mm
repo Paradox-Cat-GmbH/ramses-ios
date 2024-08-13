@@ -52,10 +52,10 @@ namespace ramses_internal
     {
         LOG_DEBUG(CONTEXT_RENDERER, "Window_Apple::~Window_Apple");
         
-        runOnUIThread(^(void) {
+       // runOnUIThread(^(void) {
             mWindow->destroy();
             mWindow = nullptr;
-        });
+       // });
     }
 
     Bool Window_Apple::init()
