@@ -27,6 +27,7 @@ if (ramses-sdk_ENABLE_SANITIZER STREQUAL "asan" OR
     message(WARNING "Static library type not supported for ramses-shared-lib in general, switching to static lib for address sanitizer to work correctly.")
     set(LIB_TYPE "STATIC_LIBRARY")
 endif()
+set(LIB_TYPE "STATIC_LIBRARY")
 
 # Collect impl.cpp for framework and client depending on configured cmake options
 list(APPEND HEADLESS_SOURCES        ${PROJECT_SOURCE_DIR}/src/framework/impl/*.cpp)
