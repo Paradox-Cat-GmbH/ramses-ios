@@ -13,15 +13,12 @@
 #include <string_view>
 #include <cassert>
 
-// EnumTraits implementation relies on compiler macros __FUNCSIG__ / __PRETTY_FUNCTION__
-// These are non-standard and only supported for recent compilers
-// Sometimes older compilers do support __PRETTY_FUNCTION__, but they do not distinguish between known and unknown enum values.
-// Those compilers are not supported either (e.g. gcc-7).
-#if defined(_MSC_VER) && _MSC_VER >= 1910 || defined(__GNUC__) && __GNUC__ >= 9 || defined(__clang__) && __clang_major__ >= 5
+#if defined(__APPLE__)
+// apple clang raises -Wenum-constexpr-conversion and compilation speed is very slow
+#elif defined(_MSC_VER) && _MSC_VER >= 1910 || defined(__GNUC__) && __GNUC__ >= 9 || defined(__clang__) && __clang_major__ >= 5
 #undef RAMSES_HAS_ENUMTRAITS
 #define RAMSES_HAS_ENUMTRAITS 1 // prefer ramses::internal::EnumTraits::IsSupported() where possible
 #endif
-
 namespace ramses::internal
 {
     namespace EnumTraits
@@ -98,8 +95,12 @@ namespace ramses::internal
 
             template <typename E> struct ElementCount
             {
+#if RAMSES_HAS_ENUMTRAITS
                 // calculates the number of known enum values for the value range: 0..Limit
                 static const size_t value = InternalElementCount<E>(std::make_integer_sequence<size_t, Limit>());
+#else
+                static const size_t value = 0;
+#endif
             };
         }
 
