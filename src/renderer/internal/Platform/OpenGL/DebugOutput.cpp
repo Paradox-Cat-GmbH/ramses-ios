@@ -1,4 +1,4 @@
-﻿//  -------------------------------------------------------------------------
+//  -------------------------------------------------------------------------
 //  Copyright (C) 2018 BMW Car IT GmbH
 //  -------------------------------------------------------------------------
 //  This Source Code Form is subject to the terms of the Mozilla Public
@@ -14,7 +14,7 @@
 
 namespace ramses::internal
 {
-    static void GLAPIENTRY debugCallback(GLenum /*source*/,
+    static void debugCallback(GLenum /*source*/,
                                        GLenum type,
                                        GLuint /*id*/,
                                        GLenum /*severity*/,
@@ -23,26 +23,8 @@ namespace ramses::internal
                                        const void* userParam)
     {
         assert(userParam);
-
-        switch (type)
-        {
-        case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-        case GL_DEBUG_TYPE_ERROR:
-            LOG_ERROR(CONTEXT_RENDERER, "OpenGL error: {}", message);
-            *(const_cast<bool*>(static_cast<const bool*>(userParam))) = true;
-            break;
-        case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-        case GL_DEBUG_TYPE_PORTABILITY:
-        case GL_DEBUG_TYPE_PERFORMANCE:
-            LOG_WARN(CONTEXT_RENDERER, "OpenGL warning: {}", message);
-            break;
-        case GL_DEBUG_TYPE_MARKER:
-        case GL_DEBUG_TYPE_PUSH_GROUP:
-        case GL_DEBUG_TYPE_POP_GROUP:
-        case GL_DEBUG_TYPE_OTHER:
-        default:
-            LOG_TRACE(CONTEXT_RENDERER, "OpenGL info: {}", message);
-        }
+        
+        LOG_WARN(CONTEXT_RENDERER, "OpenGL warning: {}", message);
     }
 
     void DebugOutput::enable()
@@ -52,7 +34,7 @@ namespace ramses::internal
             LOG_INFO(CONTEXT_RENDERER, "Could not find OpenGL debug output extension");
             return;
         }
-
+/*
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
@@ -64,12 +46,12 @@ namespace ramses::internal
 
         // ... except redundant state change warnings on nvidia cards
         const std::array<const GLuint, 1> messageIds{{8}};
-        glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_PERFORMANCE, GL_DONT_CARE, static_cast<GLsizei>(messageIds.size()), messageIds.data(), GL_FALSE);
+        glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_PERFORMANCE, GL_DONT_CARE, static_cast<GLsizei>(messageIds.size()), messageIds.data(), GL_FALSE);*/
     }
 
     bool DebugOutput::IsAvailable()
     {
-        return (glDebugMessageCallback != nullptr && glDebugMessageControl != nullptr);
+        return false;//(glDebugMessageCallback != nullptr && glDebugMessageControl != nullptr);
     }
 
     bool DebugOutput::checkAndResetError() const

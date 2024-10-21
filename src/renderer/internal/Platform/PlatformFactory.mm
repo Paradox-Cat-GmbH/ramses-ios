@@ -30,7 +30,7 @@
 #include "internal/Platform/Android/Platform_Android_EGL.h"
 #endif
 #if defined(ramses_sdk_ENABLE_WINDOW_TYPE_IOS)
-#include "internal/Platform/iOS/Platform_iOS_EGL.h"
+#include "internal/Platform/iOS/Platform_iOS_EAGL.h"
 #endif
 
 #if defined(ramses_sdk_ENABLE_DEVICE_TYPE_VULKAN)
@@ -75,7 +75,7 @@ namespace ramses::internal
             break;
         case ramses::EWindowType::iOS:
 #if defined(ramses_sdk_ENABLE_WINDOW_TYPE_IOS)
-            return std::make_unique<Platform_iOS_EGL>(rendererConfig);
+            return std::make_unique<Platform_iOS_EAGL>(rendererConfig);
 #endif
             break;
         case EWindowType::Wayland_IVI:

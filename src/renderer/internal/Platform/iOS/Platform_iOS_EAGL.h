@@ -9,14 +9,14 @@
 #pragma once
 
 #include "internal/Platform/iOS/Window_iOS.h"
-#include "internal/Platform/EGL/Platform_EGL.h"
+#include "internal/Platform/EAGL/Platform_EAGL.h"
 
 namespace ramses::internal
 {
-    class Platform_iOS_EGL : public Platform_EGL<Window_iOS>
+    class Platform_iOS_EAGL : public Platform_EAGL<Window_iOS>
     {
     public:
-        explicit Platform_iOS_EGL(const RendererConfigData& rendererConfig);
+        explicit Platform_iOS_EAGL(const RendererConfigData& rendererConfig);
 
     protected:
         virtual bool createWindow(const DisplayConfigData& displayConfig, IWindowEventHandler& windowEventHandler) override;

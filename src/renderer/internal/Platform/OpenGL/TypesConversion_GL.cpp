@@ -410,11 +410,11 @@ namespace ramses::internal
         case EEffectInputTextureType_Texture2D:
             return GL_TEXTURE_2D;
         case EEffectInputTextureType_Texture2DMS:
-            return GL_TEXTURE_2D_MULTISAMPLE;
+            return GL_TEXTURE_2D;
         case EEffectInputTextureType_Texture3D:
             return GL_TEXTURE_3D;
         case EEffectInputTextureType_TextureExternal:
-            return GL_TEXTURE_EXTERNAL_OES;
+            return GL_TEXTURE_2D;
 
         default:
             assert("Unsupported texture target!" && false);
@@ -573,7 +573,7 @@ namespace ramses::internal
             return EPixelStorageFormat::ETC2RGB;
         case GL_COMPRESSED_RGBA8_ETC2_EAC:
             return EPixelStorageFormat::ETC2RGBA;
-        case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
+       // case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
             // not supported by ramses
         default:
             return EPixelStorageFormat::Invalid;

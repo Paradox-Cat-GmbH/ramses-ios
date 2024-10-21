@@ -17,5 +17,6 @@
  * However, this won't make the context GLES3 compatible by itself. It still requires an extension
  * to support GLES3 shaders (e.g. GL_ARB_ES3_2_compatibility)
  */
-#include <glad/gles2.h>
 
+#include <OpenGLES/ES3/gl.h>
+#include <OpenGLES/ES3/glext.h>

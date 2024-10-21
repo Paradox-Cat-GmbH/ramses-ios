@@ -74,10 +74,11 @@ namespace ramses::internal
         {
             std::lock_guard<std::mutex> lock{s_gladMutex};
             // initialize GLES3.2 API + extensions
-            if (GLAD_GL_ES_VERSION_2_0 == 0)
+            // DISABLED FOR GLKIT PORT
+            /*if (GLAD_GL_ES_VERSION_2_0 == 0)
             {
                 gladLoadGLES2(m_context.getGlProcLoadFunc());
-            }
+            }*/
         }
 #if defined _DEBUG
         m_debugOutput.enable();
@@ -137,7 +138,7 @@ namespace ramses::internal
         PrintOpenGLExtensions();
         queryDeviceDependentFeatures();
 
-        m_framebufferRenderTarget = m_resourceMapper.registerResource(std::make_unique<RenderTargetGPUResource>(0));
+        m_framebufferRenderTarget = m_resourceMapper.registerResource(std::make_unique<RenderTargetGPUResource>(1));
 
 // This is required for proper smoothing of cube sides. This feature is enabled by default on ES 3.0,
 // but needs explicit enabling for Desktop GL
@@ -350,9 +351,9 @@ namespace ramses::internal
     {
         LOG_DEBUG(CONTEXT_RENDERER, "Device_GL::createTexture:  creating a new texture (texture render target)");
 
-        const GLHandle texID = GenerateAndBindTexture((sampleCount) != 0u ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D);
+        const GLHandle texID = GenerateAndBindTexture((sampleCount) != 0u ? GL_TEXTURE_2D :  GL_TEXTURE_2D);
         GLTextureInfo texInfo;
-        fillGLInternalTextureInfo((sampleCount) != 0u ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D,
+        fillGLInternalTextureInfo((sampleCount) != 0u ? GL_TEXTURE_2D : GL_TEXTURE_2D,
                                   width,
                                   height,
                                   1u,
@@ -395,7 +396,7 @@ namespace ramses::internal
         }
 
         sampleCount = CheckAndClampNumberOfSamples(internalFormat, sampleCount);
-
+        
         glRenderbufferStorageMultisample(GL_RENDERBUFFER, static_cast<GLsizei>(sampleCount), internalFormat, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 
         return renderbufferHandle;
@@ -462,6 +463,7 @@ namespace ramses::internal
         const auto uniformLocation = m_activeShader->getUniformLocation(field);
         if (uniformLocation.isValid())
             glUniform2iv(uniformLocation.getValue(), static_cast<GLsizei>(count), glm::value_ptr(value[0]));
+
         return uniformLocation.isValid();
     }
 
@@ -511,7 +513,7 @@ namespace ramses::internal
         GLTextureInfo texInfo;
         fillGLInternalTextureInfo(GL_TEXTURE_2D, width, height, 1u, textureFormat, swizzle, texInfo);
         AllocateTextureStorage(texInfo, mipLevelCount);
-
+        
         return m_resourceMapper.registerResource(std::make_unique<TextureGPUResource_GL>(texInfo, texID, totalSizeInBytes));
     }
 
@@ -521,7 +523,7 @@ namespace ramses::internal
         GLTextureInfo texInfo;
         fillGLInternalTextureInfo(GL_TEXTURE_3D, width, height, depth, textureFormat, DefaultTextureSwizzleArray, texInfo);
         AllocateTextureStorage(texInfo, mipLevelCount);
-
+        
         return m_resourceMapper.registerResource(std::make_unique<TextureGPUResource_GL>(texInfo, texID, totalSizeInBytes));
     }
 
@@ -531,21 +533,12 @@ namespace ramses::internal
         GLTextureInfo texInfo;
         fillGLInternalTextureInfo(GL_TEXTURE_CUBE_MAP, faceSize, faceSize, 1u, textureFormat, swizzle, texInfo);
         AllocateTextureStorage(texInfo, mipLevelCount);
-
+        
         return m_resourceMapper.registerResource(std::make_unique<TextureGPUResource_GL>(texInfo, texID, totalSizeInBytes));
     }
 
     DeviceResourceHandle Device_GL::allocateExternalTexture()
     {
-        if (m_limits.isExternalTextureExtensionSupported())
-        {
-            const auto textureTarget = GL_TEXTURE_EXTERNAL_OES;
-            const GLHandle texID = GenerateAndBindTexture(textureTarget);
-            GLTextureInfo texInfo;
-            fillGLInternalTextureInfo(textureTarget, 0u, 0u, 1u, EPixelStorageFormat::RGBA8, {}, texInfo);
-
-            return m_resourceMapper.registerResource(std::make_unique<TextureGPUResource_GL>(texInfo, texID, 0u));
-        }
         LOG_ERROR(CONTEXT_RENDERER, "Device_GL::allocateExternalTexture: feature not supported on platform");
         return {};
     }
@@ -611,7 +604,7 @@ namespace ramses::internal
         assert(!texInfo.uploadParams.compressed);
         // For now stream texture upload is using glTexImage2D instead of glStore/glSubimage because its size/format cannot be immutable
         glTexImage2D(texInfo.target, 0, texInfo.uploadParams.sizedInternalFormat, texInfo.width, texInfo.height, 0, texInfo.uploadParams.baseInternalFormat, texInfo.uploadParams.type, data);
-
+        
         return handle;
     }
 
@@ -646,7 +639,7 @@ namespace ramses::internal
                 numSamples = maxNumSamples;
             }
         }
-
+        
         return numSamples;
     }
 
@@ -667,10 +660,6 @@ namespace ramses::internal
         case GL_TEXTURE_2D:
         case GL_TEXTURE_CUBE_MAP:
             glTexStorage2D(texInfo.target, static_cast<GLsizei>(mipLevels), texInfo.uploadParams.sizedInternalFormat, texInfo.width, texInfo.height);
-            break;
-        case GL_TEXTURE_2D_MULTISAMPLE:
-            sampleCount = CheckAndClampNumberOfSamples(texInfo.uploadParams.sizedInternalFormat, sampleCount);
-            glTexStorage2DMultisample(texInfo.target, static_cast<GLsizei>(sampleCount), texInfo.uploadParams.sizedInternalFormat, texInfo.width, texInfo.height, ToGLboolean(true));
             break;
         case GL_TEXTURE_3D:
             glTexStorage3D(texInfo.target, static_cast<GLsizei>(mipLevels), texInfo.uploadParams.sizedInternalFormat, texInfo.width, texInfo.height, texInfo.depth);
@@ -994,7 +983,7 @@ namespace ramses::internal
             return DeviceResourceHandle::Invalid();
         }
         glDrawBuffers(static_cast<GLsizei>(colorBuffers.size()), colorBuffers.data());
-
+        
         const DeviceResourceHandle fboHandle = m_resourceMapper.registerResource(std::make_unique<RenderTargetGPUResource>(fboAddress));
         return fboHandle;
     }
@@ -1014,7 +1003,9 @@ namespace ramses::internal
         // Not to be used with default framebuffer which might need (depending on implementation) different enums for attachments
         // https://www.khronos.org/registry/OpenGL-Refpages/es3.0/html/glInvalidateFramebuffer.xhtml
         constexpr std::array<GLenum, 3> depthStencilAttachments = { GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT, GL_DEPTH_STENCIL_ATTACHMENT };
-        glInvalidateFramebuffer(GL_FRAMEBUFFER, static_cast<GLsizei>(depthStencilAttachments.size()), depthStencilAttachments.data());
+        // DISABLED FOR GLKIT PORT
+        // glInvalidateFramebuffer(GL_FRAMEBUFFER, static_cast<GLsizei>(depthStencilAttachments.size()), depthStencilAttachments.data());
+
     }
 
     void Device_GL::BindRenderBufferToRenderTarget(const RenderBufferGPUResource& renderBufferGpuResource, size_t colorBufferSlot)
@@ -1035,7 +1026,7 @@ namespace ramses::internal
 
     void Device_GL::BindReadWriteRenderBufferToRenderTarget(EPixelStorageFormat bufferFormat, size_t colorBufferSlot, GLHandle bufferGLHandle, const bool multiSample)
     {
-        const int texTarget = (multiSample) ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+        const int texTarget = (multiSample) ? GL_TEXTURE_2D : GL_TEXTURE_2D;
         if (IsDepthOnlyFormat(bufferFormat))
         {
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texTarget, bufferGLHandle, 0);
@@ -1260,7 +1251,6 @@ namespace ramses::internal
         glGenBuffers(1, &glAddress);
         assert(glAddress != InvalidGLHandle);
         assert(dataType == EDataType::UInt16 || dataType == EDataType::UInt32);
-
         return m_resourceMapper.registerResource(std::make_unique<IndexBufferGPUResource>(glAddress, sizeInBytes, dataType == EDataType::UInt16 ? 2 : 4));
     }
 
@@ -1502,16 +1492,9 @@ namespace ramses::internal
             }));
         }
 
-        if (GLAD_GL_EXT_texture_filter_anisotropic != 0)
-        {
-            GLint anisotropy = 0;
-            glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
-            m_limits.setMaximumAnisotropy(anisotropy);
-        }
-        else
-        {
-            LOG_WARN(CONTEXT_RENDERER, "Device_GL::queryDeviceDependentFeatures: anisotropic filtering not available on this device");
-        }
+        GLint anisotropy = 0;
+        glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
+        m_limits.setMaximumAnisotropy(anisotropy);
 
         GLint maxDrawBuffers{ 0 };
         glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
@@ -1519,7 +1502,7 @@ namespace ramses::internal
 
         // There are 2 extensions for external texture, one for using external texture sampler in ES2 shader and one for using it in ES3+ shader.
         // Either of them can be used on client side and therefore we require both.
-        const bool externalTexturesSupported = (GLAD_GL_OES_EGL_image_external != 0) && (GLAD_GL_OES_EGL_image_external_essl3 != 0);
+        const bool externalTexturesSupported = false;
         LOG_INFO(CONTEXT_RENDERER, fmt::format("Device_GL::queryDeviceDependentFeatures: External textures support = {}", externalTexturesSupported));
 
         m_limits.setExternalTextureExtensionSupported(externalTexturesSupported);

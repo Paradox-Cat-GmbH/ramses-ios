@@ -12,7 +12,6 @@
 #include "internal/Core/Utils/Warnings.h"
 
 #include "QuartzCore/CAMetalLayer.h"
-#include "EGL/egl.h"
 
 namespace ramses::internal
 {
@@ -35,7 +34,7 @@ namespace ramses::internal
 
     int Window_iOS::getNativeDisplayHandle() const
     {
-        return EGL_DEFAULT_DISPLAY;
+        return 0;
     }
 
     void* Window_iOS::getNativeWindowHandle() const

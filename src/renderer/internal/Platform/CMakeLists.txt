@@ -14,7 +14,7 @@ if(ramses-sdk_ENABLE_WINDOW_TYPE_WINDOWS)
     message(STATUS "+ Window Type: Windows Window")
 endif()
 
-if(ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_IVI OR ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_WL_SHELL OR ramses-sdk_ENABLE_WINDOW_TYPE_X11 OR ramses-sdk_ENABLE_WINDOW_TYPE_ANDROID OR ramses-sdk_ENABLE_WINDOW_TYPE_IOS)
+if(ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_IVI OR ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_WL_SHELL OR ramses-sdk_ENABLE_WINDOW_TYPE_X11 OR ramses-sdk_ENABLE_WINDOW_TYPE_ANDROID)
     list(APPEND PLATFORM_SOURCES    EGL/*.h
                                     EGL/*.cpp)
     list(APPEND PLATFORM_LIBS       EGL)
@@ -39,7 +39,10 @@ endif()
 if(ramses-sdk_ENABLE_WINDOW_TYPE_IOS)
     list(APPEND PLATFORM_SOURCES    iOS/*.h
                                     iOS/*.cpp
-                                    iOS/*.mm)
+                                    iOS/*.mm
+                                    EAGL/*.h
+                                    EAGL/*.cpp
+                                    EAGL/*.mm)
     list(APPEND PLATFORM_LIBS       QuartzCore)
     message(STATUS "+ Window Type: iOS Window")
 endif()
@@ -96,6 +99,7 @@ createModule(
     ENABLE_INSTALL          OFF
     SRC_FILES               *.h
                             *.cpp
+                            *.mm
                             OpenGL/*.h
                             OpenGL/*.cpp
                             ${PLATFORM_SOURCES}

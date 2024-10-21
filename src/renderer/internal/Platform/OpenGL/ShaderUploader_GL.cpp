@@ -64,7 +64,7 @@ namespace ramses::internal
         GLHandle geometryShaderHandle = InvalidGLHandle;
         if (hasGeometryShader)
         {
-            geometryShaderHandle = CompileShaderStage(effect.getGeometryShader(), GL_GEOMETRY_SHADER_EXT, debugErrorLog);
+            geometryShaderHandle = InvalidGLHandle;
 
             if (InvalidGLHandle == geometryShaderHandle)
             {

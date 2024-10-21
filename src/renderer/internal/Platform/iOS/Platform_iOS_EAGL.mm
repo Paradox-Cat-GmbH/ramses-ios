@@ -6,16 +6,16 @@
 //  file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //  -------------------------------------------------------------------------
 
-#include "internal/Platform/iOS/Platform_iOS_EGL.h"
+#include "internal/Platform/iOS/Platform_iOS_EAGL.h"
 
 namespace ramses::internal
 {
-    Platform_iOS_EGL::Platform_iOS_EGL(const RendererConfigData& rendererConfig)
-        : Platform_EGL<Window_iOS>(rendererConfig)
+    Platform_iOS_EAGL::Platform_iOS_EAGL(const RendererConfigData& rendererConfig)
+        : Platform_EAGL<Window_iOS>(rendererConfig)
     {
     }
 
-    bool Platform_iOS_EGL::createWindow(const DisplayConfigData& displayConfig, IWindowEventHandler& windowEventHandler)
+    bool Platform_iOS_EAGL::createWindow(const DisplayConfigData& displayConfig, IWindowEventHandler& windowEventHandler)
     {
         auto window = std::make_unique<Window_iOS>(displayConfig, windowEventHandler, 0u);
         if (window->init())
@@ -27,7 +27,7 @@ namespace ramses::internal
         return false;
     }
 
-    uint32_t Platform_iOS_EGL::getSwapInterval() const
+    uint32_t Platform_iOS_EAGL::getSwapInterval() const
     {
         return 1u;
     }
