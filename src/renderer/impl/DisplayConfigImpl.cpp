@@ -153,6 +153,17 @@ namespace ramses::internal
         return true;
     }
 
+    MacOSNativeWindowPtr DisplayConfigImpl::getMacOSNativeWindow() const
+    {
+        return m_internalConfig.getMacOSNativeWindow();
+    }
+
+    bool DisplayConfigImpl::setMacOSNativeWindow(MacOSNativeWindowPtr nativeWindowPtr)
+    {
+        m_internalConfig.setMacOSNativeWindow(nativeWindowPtr);
+        return true;
+    }
+
     bool DisplayConfigImpl::setWindowIviVisible(bool visible)
     {
         m_internalConfig.setStartVisibleIvi(visible);
@@ -337,6 +348,7 @@ namespace ramses::internal
             {EWindowType::Wayland_Shell, EDeviceType::GLES_3_0},
             {EWindowType::Android, EDeviceType::GLES_3_0},
             {EWindowType::iOS, EDeviceType::GLES_3_0},
+            {EWindowType::macOS, EDeviceType::GLES_3_0},
             }};
 
         const bool supported = std::any_of(supportedDeviceWindowCombinations.cbegin(), supportedDeviceWindowCombinations.cend(),
@@ -355,6 +367,9 @@ namespace ramses::internal
 
         if (m_internalConfig.getIOSNativeWindow().isValid() && m_internalConfig.getWindowType() != EWindowType::iOS)
             report.add(EIssueType::Error, "External iOS window handle is set and selected window type is not iOS", nullptr);
+
+        if (m_internalConfig.getMacOSNativeWindow().isValid() && m_internalConfig.getWindowType() != EWindowType::macOS)
+            report.add(EIssueType::Error, "External macOS window handle is set and selected window type is not iOS", nullptr);
 
         if(requestedDevice == EDeviceType::Vulkan && m_internalConfig.isAsyncEffectUploadEnabled())
             report.add(EIssueType::Error, "Vulkan does not support async shader upload", nullptr);

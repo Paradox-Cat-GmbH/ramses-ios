@@ -14,7 +14,7 @@ if(ramses-sdk_ENABLE_WINDOW_TYPE_WINDOWS)
     message(STATUS "+ Window Type: Windows Window")
 endif()
 
-if(ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_IVI OR ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_WL_SHELL OR ramses-sdk_ENABLE_WINDOW_TYPE_X11 OR ramses-sdk_ENABLE_WINDOW_TYPE_ANDROID OR ramses-sdk_ENABLE_WINDOW_TYPE_IOS)
+if(ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_IVI OR ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_WL_SHELL OR ramses-sdk_ENABLE_WINDOW_TYPE_X11 OR ramses-sdk_ENABLE_WINDOW_TYPE_ANDROID OR ramses-sdk_ENABLE_WINDOW_TYPE_IOS OR ramses-sdk_ENABLE_WINDOW_TYPE_MACOS)
     list(APPEND PLATFORM_SOURCES    EGL/*.h
                                     EGL/*.cpp)
     list(APPEND PLATFORM_LIBS       EGL)
@@ -42,6 +42,14 @@ if(ramses-sdk_ENABLE_WINDOW_TYPE_IOS)
                                     iOS/*.mm)
     list(APPEND PLATFORM_LIBS       QuartzCore)
     message(STATUS "+ Window Type: iOS Window")
+endif()
+
+if(ramses-sdk_ENABLE_WINDOW_TYPE_MACOS)
+    list(APPEND PLATFORM_SOURCES    macOS/*.h
+                                    macOS/*.cpp
+                                    macOS/*.mm)
+    list(APPEND PLATFORM_LIBS       QuartzCore)
+    message(STATUS "+ Window Type: macOS Window")
 endif()
 
 if(ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_IVI OR ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_WL_SHELL)

@@ -668,7 +668,7 @@ namespace ramses::internal
 
     void Renderer::updateSystemCompositorController() const
     {
-        if (m_platform.getSystemCompositorController())
+         if (m_platform.getSystemCompositorController())
         {
             LOG_TRACE(CONTEXT_PROFILING, "Renderer::updateSystemCompositorController update system compositor controller");
             m_platform.getSystemCompositorController()->update();

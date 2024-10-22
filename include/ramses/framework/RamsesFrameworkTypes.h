@@ -236,6 +236,16 @@ namespace ramses
     using IOSNativeWindowPtr = StronglyTypedValue<void*, nullptr, IOSNativeWindowPtrTag>;
 
     /**
+    * @brief Struct used as unique id for the strongly typed iOS window pointer.
+    */
+    struct MacOSNativeWindowPtrTag {};
+
+    /**
+    * @brief Platform handle to an iOS window native pointer (CAMetalLayer)
+    */
+    using MacOSNativeWindowPtr = StronglyTypedValue<void*, nullptr, MacOSNativeWindowPtrTag>;
+
+    /**
     * @brief Clear flags used to specify which components of a render target or display buffer should be cleared.
     *
     */

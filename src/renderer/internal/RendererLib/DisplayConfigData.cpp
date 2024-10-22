@@ -87,6 +87,16 @@ namespace ramses::internal
         m_iOSNativeWindowPtr = nativeWindowPtr;
     }
 
+    MacOSNativeWindowPtr DisplayConfigData::getMacOSNativeWindow() const
+    {
+        return m_macOSNativeWindowPtr;
+    }
+
+    void DisplayConfigData::setMacOSNativeWindow(MacOSNativeWindowPtr nativeWindowPtr)
+    {
+        m_macOSNativeWindowPtr = nativeWindowPtr;
+    }
+
     bool DisplayConfigData::getStartVisibleIvi() const
     {
         return m_startVisibleIvi;

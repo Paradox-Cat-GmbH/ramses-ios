@@ -69,9 +69,12 @@ namespace ramses::internal
 
         [[nodiscard]] AndroidNativeWindowPtr getAndroidNativeWindow() const;
         void setAndroidNativeWindow(AndroidNativeWindowPtr nativeWindowPtr);
-
+        
         [[nodiscard]] IOSNativeWindowPtr getIOSNativeWindow() const;
         void setIOSNativeWindow(IOSNativeWindowPtr nativeWindowPtr);
+        
+        [[nodiscard]] MacOSNativeWindowPtr getMacOSNativeWindow() const;
+        void setMacOSNativeWindow(MacOSNativeWindowPtr nativeWindowPtr);
 
         [[nodiscard]] bool getStartVisibleIvi() const;
         void setStartVisibleIvi(bool startVisible);
@@ -141,6 +144,9 @@ namespace ramses::internal
 #if defined(ramses_sdk_ENABLE_WINDOW_TYPE_IOS)
             EWindowType::iOS
 #endif
+#if defined(ramses_sdk_ENABLE_WINDOW_TYPE_MACOS)
+            EWindowType::macOS
+#endif
         };
         static_assert(!SupportedWindowTypes.empty(), "No window types supported for build configuration");
         EWindowType m_windowType = *SupportedWindowTypes.begin();
@@ -161,6 +167,7 @@ namespace ramses::internal
         X11WindowHandle m_x11WindowHandle;
         AndroidNativeWindowPtr m_androidNativeWindowPtr;
         IOSNativeWindowPtr m_iOSNativeWindowPtr;
+        MacOSNativeWindowPtr m_macOSNativeWindowPtr;
         bool m_startVisibleIvi = false;
         std::string m_waylandDisplay;
 

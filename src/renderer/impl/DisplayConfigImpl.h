@@ -48,6 +48,8 @@ namespace ramses::internal
         [[nodiscard]] bool setAndroidNativeWindow(void * nativeWindowPtr);
         [[nodiscard]] IOSNativeWindowPtr getIOSNativeWindow() const;
         [[nodiscard]] bool setIOSNativeWindow(IOSNativeWindowPtr nativeWindowPtr);
+        [[nodiscard]] MacOSNativeWindowPtr getMacOSNativeWindow() const;
+        [[nodiscard]] bool setMacOSNativeWindow(MacOSNativeWindowPtr nativeWindowPtr);
         [[nodiscard]] bool setWindowIviVisible(bool visible);
         [[nodiscard]] bool setResizable(bool resizable);
         [[nodiscard]] bool setGPUMemoryCacheSize(uint64_t size);

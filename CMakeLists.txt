@@ -41,6 +41,7 @@ option(ramses-sdk_ENABLE_WINDOW_TYPE_WINDOWS            "Enable building for Win
 option(ramses-sdk_ENABLE_WINDOW_TYPE_X11                "Enable building for X11 window" OFF)
 option(ramses-sdk_ENABLE_WINDOW_TYPE_ANDROID            "Enable building for Android window" OFF)
 option(ramses-sdk_ENABLE_WINDOW_TYPE_IOS                "Enable building for iOS window" OFF)
+option(ramses-sdk_ENABLE_WINDOW_TYPE_MACOS               "Enable building for macOS window" OFF)
 option(ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_IVI        "Enable building for Wayland ivi window" OFF)
 option(ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_WL_SHELL   "Enable building for Wayland wl_shell window" OFF)
 option(ramses-sdk_ENABLE_DEVICE_TYPE_VULKAN             "Enable building for an EXPERIMENTAL vulkan device" OFF)
@@ -139,6 +140,7 @@ if(    ramses-sdk_ENABLE_WINDOW_TYPE_WINDOWS
     OR ramses-sdk_ENABLE_WINDOW_TYPE_X11
     OR ramses-sdk_ENABLE_WINDOW_TYPE_ANDROID
     OR ramses-sdk_ENABLE_WINDOW_TYPE_IOS
+    OR ramses-sdk_ENABLE_WINDOW_TYPE_MACOS
     OR ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_IVI
     OR ramses-sdk_ENABLE_WINDOW_TYPE_WAYLAND_WL_SHELL)
         set(ANY_WINDOW_TYPE_ENABLED ON)
@@ -169,6 +171,8 @@ if(NOT ANY_WINDOW_TYPE_ENABLED)
             setDefaultWindowType(ramses-sdk_ENABLE_WINDOW_TYPE_ANDROID "Android")
         elseif(CMAKE_SYSTEM_NAME  STREQUAL "iOS")
             setDefaultWindowType(ramses-sdk_ENABLE_WINDOW_TYPE_IOS "iOS")
+        elseif(CMAKE_SYSTEM_NAME  STREQUAL "Darwin")
+            setDefaultWindowType(ramses-sdk_ENABLE_WINDOW_TYPE_MACOS "macOS")
         else()
             message(WARNING "No default window type is known for the build operating system '${CMAKE_SYSTEM_NAME}':\n"
                              "* Either disable default window type by setting ramses-sdk_ENABLE_DEFAULT_WINDOW_TYPE=OFF\n"

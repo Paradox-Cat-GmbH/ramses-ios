@@ -32,6 +32,9 @@
 #if defined(ramses_sdk_ENABLE_WINDOW_TYPE_IOS)
 #include "internal/Platform/iOS/Platform_iOS_EGL.h"
 #endif
+#if defined(ramses_sdk_ENABLE_WINDOW_TYPE_MACOS)
+#include "internal/Platform/macOS/Platform_macOS_EGL.h"
+#endif
 
 #if defined(ramses_sdk_ENABLE_DEVICE_TYPE_VULKAN)
 #include "internal/Platform/Vulkan/Platform_Vulkan.h"
@@ -78,6 +81,11 @@ namespace ramses::internal
             return std::make_unique<Platform_iOS_EGL>(rendererConfig);
 #endif
             break;
+        case ramses::EWindowType::macOS:
+#if defined(ramses_sdk_ENABLE_WINDOW_TYPE_MACOS)
+            return std::make_unique<Platform_macOS_EGL>(rendererConfig);
+#endif
+            break;
         case EWindowType::Wayland_IVI:
 #if defined(ramses_sdk_ENABLE_WINDOW_TYPE_WAYLAND_IVI)
             return std::make_unique<Platform_Wayland_IVI_EGL_ES_3_0>(rendererConfig);
@@ -114,6 +122,10 @@ namespace ramses::internal
             break;
         case ramses::EWindowType::iOS:
 #if defined(ramses_sdk_ENABLE_WINDOW_TYPE_IOS) && defined(ramses_sdk_ENABLE_DEVICE_TYPE_VULKAN)
+#endif
+            break;
+        case ramses::EWindowType::macOS:
+#if defined(ramses_sdk_ENABLE_WINDOW_TYPE_MACOS) && defined(ramses_sdk_ENABLE_DEVICE_TYPE_VULKAN)
 #endif
             break;
         case EWindowType::Wayland_IVI:

@@ -161,6 +161,17 @@ namespace ramses
         return m_impl->setIOSNativeWindow(nativeWindowPtr);
     }
 
+    MacOSNativeWindowPtr DisplayConfig::getMacOSNativeWindow() const
+    {
+        return m_impl->getMacOSNativeWindow();
+    }
+
+    bool DisplayConfig::setMacOSNativeWindow(MacOSNativeWindowPtr nativeWindowPtr)
+    {
+        return m_impl->setMacOSNativeWindow(nativeWindowPtr);
+    }
+
+
     bool DisplayConfig::setWindowIviVisible()
     {
         const auto status = m_impl->setWindowIviVisible(true);

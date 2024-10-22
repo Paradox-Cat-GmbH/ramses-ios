@@ -308,7 +308,8 @@ namespace ramses
         Wayland_IVI,
         Wayland_Shell,
         Android,
-        iOS
+        iOS,
+        macOS
     };
 
     /**

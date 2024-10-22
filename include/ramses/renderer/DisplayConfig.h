@@ -203,7 +203,7 @@ namespace ramses
         * @return true on success, false if an error occurred (error is logged)
         */
         bool setAndroidNativeWindow(void* nativeWindowPtr);
-
+        
         /**
         * @brief Get the current setting of iOS native window.
         *
@@ -222,6 +222,25 @@ namespace ramses
         * @return true for success, false otherwise (check log for details).
         */
         bool setIOSNativeWindow(IOSNativeWindowPtr nativeWindowPtr);
+        
+        /**
+        * @brief Get the current setting of macOS native window.
+        *
+        * @return the current setting of macOS native window (CAMetalLayer), returns nullptr if no value has been set yet
+        */
+        [[nodiscard]] MacOSNativeWindowPtr getMacOSNativeWindow() const;
+
+        /**
+        * @brief [Mandatory on macOS] Set native window to use for rendering on macOS.
+        *
+        * @param[in] nativeWindowPtr Strongly typed value that wraps CAMetalLayer* which should be added to
+        *                            the view where RAMSES should rendered to.
+        *
+        * No ownership is transferred, the user is responsible to clean up the CAMetalLayer after destroying the RAMSES Renderer.
+        *
+        * @return true for success, false otherwise (check log for details).
+        */
+        bool setMacOSNativeWindow(MacOSNativeWindowPtr nativeWindowPtr);
 
         /**
         * @brief Set IVI window to be visible right after window creation
