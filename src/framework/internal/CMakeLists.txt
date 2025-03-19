@@ -96,6 +96,10 @@ if(ramses-sdk_USE_LINUX_DEV_PTP)
     target_compile_definitions(ramses-framework-internal PUBLIC "-DRAMSES_LINUX_USE_DEV_PTP=1")
 endif()
 
+if(ramses-sdk_ENABLE_ENUM_TRAITS)
+    target_compile_definitions(ramses-framework-internal PUBLIC "-DRAMSES_HAS_ENUMTRAITS")
+endif()
+
 # Thread priority and binding for worker threads
 if (DEFINED ramses-sdk_WORKER_THREAD_PRIORITY AND NOT ramses-sdk_WORKER_THREAD_PRIORITY STREQUAL "")
     target_compile_definitions(ramses-framework-internal PRIVATE "-DRAMSES_WORKER_THREAD_PRIORITY=${ramses-sdk_WORKER_THREAD_PRIORITY}")

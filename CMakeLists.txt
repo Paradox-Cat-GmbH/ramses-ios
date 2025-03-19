@@ -34,6 +34,7 @@ option(ramses-sdk_WARNINGS_AS_ERRORS                    "If on, warnings are tre
 # TODO let all ramses components which are getting installed to respect this option
 option(ramses-sdk_ENABLE_INSTALL                        "Enable/disable installation of Ramses" ON)
 option(ramses-sdk_BUILD_WITH_LTO                        "Build all targets with link time optimization enabled (supported only on some platforms)." OFF)
+option(ramses-sdk_ENABLE_ENUM_TRAITS                    "Enables compile time enum type introspection." ON)
 
 # window type configuration. Several window types can be enabled in same build
 option(ramses-sdk_ENABLE_DEFAULT_WINDOW_TYPE            "Enable a default window type if none explicitly enabled" ON)
